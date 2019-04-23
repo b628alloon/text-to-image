@@ -13,7 +13,7 @@ FINAL_SIZE_TO_ORIG = {
     8: 8,
     16: 16,
     32: 38,
-    64: 76,
+    64: 600,
     128: 152,
     256: 304,
     299: 360,
@@ -70,9 +70,9 @@ class Dataset(object):
 
     def readCaptions(self, filenames, class_id):
         name = filenames
-        if name.find('jpg/') != -1:  # flowers dataset
+        if name.find('png/') != -1:  # flowers dataset
             class_name = 'class_%05d/' % (class_id + 1)  # Class ids are offset by 1 for classification tasks
-            name = name.replace('jpg/', class_name)
+            name = name.replace('png/', class_name)
         cap_path = '%s/text_c10/%s.txt' %\
                    (self.workdir, name)
         with open(cap_path, "r") as f:
