@@ -13,13 +13,14 @@ FINAL_SIZE_TO_ORIG = {
     8: 8,
     16: 16,
     32: 38,
-    64: 600,
+    64: 76,
     128: 152,
     256: 304,
     299: 360,
     512: 600,
 }
-
+W_IMSIZE = 400
+H_IMSIZE = 100
 
 class Dataset(object):
     def __init__(self, images, imsize, embeddings=None,
@@ -70,9 +71,9 @@ class Dataset(object):
 
     def readCaptions(self, filenames, class_id):
         name = filenames
-        if name.find('png/') != -1:  # flowers dataset
+        if name.find('jpg/') != -1:  # flowers dataset
             class_name = 'class_%05d/' % (class_id + 1)  # Class ids are offset by 1 for classification tasks
-            name = name.replace('png/', class_name)
+            name = name.replace('jpg/', class_name)
         cap_path = '%s/text_c10/%s.txt' %\
                    (self.workdir, name)
         with open(cap_path, "r") as f:
@@ -82,12 +83,13 @@ class Dataset(object):
 
     def transform(self, images):
         if self._aug_flag:
-            transformed_images = np.zeros([images.shape[0], self._imsize, self._imsize, 3])
+            transformed_images = np.zeros([images.shape[0], W_IMSIZE, H_IMSIZE, 3])
             ori_size = images.shape[1]
+            print("ori_size:", len(images))
             for i in range(images.shape[0]):
-                h1 = int(np.floor((ori_size - self._imsize) * np.random.random()))
-                w1 = int(np.floor((ori_size - self._imsize) * np.random.random()))
-                cropped_image = images[i][w1: w1 + self._imsize, h1: h1 + self._imsize, :]
+                h1 = int(np.floor((ori_size - W_IMSIZE) * np.random.random()))
+                w1 = int(np.floor((ori_size - H_IMSIZE) * np.random.random()))
+                cropped_image = images[i][w1: w1 + W_IMSIZE, h1: h1 + H_IMSIZE, :]
                 if random.random() > 0.5:
                     cropped_image = np.fliplr(cropped_image)
                 transformed_images[i] = cropped_image
@@ -194,7 +196,7 @@ class Dataset(object):
         sampled_images = self._images[start:end]
         sampled_images = sampled_images.astype(np.float32)
         sampled_images = sampled_images * (2. / 255) - 1.
-####    sampled_images = self.transform(sampled_images) ここ消したら動くねんけど大丈夫なんかな
+####    sampled_images = self.transform(sampled_images)		ここ削ったら動くけど大丈夫かな？
 
         sampled_embeddings = self._embeddings[start:end]
         _, embedding_num, _ = sampled_embeddings.shape
@@ -231,8 +233,8 @@ class TextDataset(object):
         self.size = size
         if size not in FINAL_SIZE_TO_ORIG:
             raise RuntimeError('Size {} not supported'.format(size))
-        self.image_filename = '/{}images.pickle'.format(FINAL_SIZE_TO_ORIG[size])
-
+        # self.image_filename = '/{}images.pickle'.format(FINAL_SIZE_TO_ORIG[size])
+        self.image_filename = '/360images.pickle'
         self.image_shape = [size, size, 3]
         self.image_dim = self.image_shape[0] * self.image_shape[1] * 3
         self.embedding_shape = None

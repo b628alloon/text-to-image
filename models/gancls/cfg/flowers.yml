@@ -1,10 +1,10 @@
 CONFIG_NAME: 'GAN-CLS'
 DATASET_NAME: 'flowers'
 
-DATASET_DIR: './data/nlvr/'
-CHECKPOINT_DIR: './checkpoints/nlvr/'
-LOGS_DIR: './logs/'
-SAMPLE_DIR: './samples/nlvr/'
+DATASET_DIR: './data/flowers/'
+CHECKPOINT_DIR: './checkpoints/GAN-CLS/flowers/'
+LOGS_DIR: './logs/gancls_logs/'
+SAMPLE_DIR: './samples/GAN-CLS/flowers/'
 
 MODEL:
   Z_DIM: 100 # Dimension of the noise vector
@@ -19,10 +19,9 @@ MODEL:
     D: 3
 
 TRAIN:
-  FLAG: True
+  FLAG: False
   BATCH_SIZE: 32 # Size of the training batches
   SAMPLE_NUM: 64 # The number of samples to be generated during training/testing by the sampler network. It must be a perfect square!!!
-#SAMPLE_NUMが正方形であるのに対しNLVRのデータセットは全て400*100 どうしたら変えられるのかな〜
   EPOCH: 40 # The number of epochs to train.
   D_LR: 0.0002 # Discriminator learning rate
   D_BETA_DECAY: 0.5 # Discriminator beta decay in AdamOptimiser

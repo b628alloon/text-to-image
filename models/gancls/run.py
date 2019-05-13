@@ -11,8 +11,8 @@ from preprocess.dataset import TextDataset
 import tensorflow as tf
 
 flags = tf.app.flags
-flags.DEFINE_string('cfg', './cfg/nlvr.yml',
-                    'Relative path to the config of the model [.cfg/nlvr.yml]')
+flags.DEFINE_string('cfg', './models/gancls/cfg/flowers.yml',
+                    'Relative path to the config of the model [./gancls/cfg/flowers.yml]')
 FLAGS = flags.FLAGS
 
 
@@ -32,7 +32,7 @@ def main(_):
     run_config.gpu_options.allow_growth = True
 
     datadir = cfg.DATASET_DIR
-    dataset = TextDataset(datadir, 64)
+    dataset = TextDataset(datadir, 299)
 
     filename_test = '%s/test' % datadir
     dataset._test = dataset.get_data(filename_test)

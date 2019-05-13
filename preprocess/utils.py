@@ -41,7 +41,7 @@ def transform(image, image_size, is_crop, bbox):
     if is_crop:
         image = custom_crop(image, bbox)
 
-    transformed_image = scipy.misc.imresize(image, [400, 100], 'bicubic')
+    transformed_image = scipy.misc.imresize(image, [image_size, image_size], 'bicubic')
     return np.array(transformed_image)
 
 
@@ -69,3 +69,4 @@ def mkdir_p(path):
             pass
         else:
             raise
+

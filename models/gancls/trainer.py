@@ -84,13 +84,13 @@ class GanClsTrainer(object):
         _, sample_embed, _, captions = self.dataset.test.next_batch_test(self.model.sample_num,
                                                                          randint(0, self.dataset.test.num_examples), 1)
         sample_embed = np.squeeze(sample_embed, axis=0)
-        print(sample_embed.shape)
+        print("sample_embed.shape: ", sample_embed.shape)
 
-        # Display the captions of the sampled images
-        print('\nCaptions of the sampled x:')
-        for caption_idx, caption_batch in enumerate(captions):
-            print('{}: {}'.format(caption_idx + 1, caption_batch[0]))
-        print()
+####        # Display the captions of the sampled images
+####        print('\nCaptions of the sampled x:')
+####        for caption_idx, caption_batch in enumerate(captions):
+####            print('{}: {}'.format(caption_idx + 1, caption_batch[0]))
+####        print()
 
         counter = 1
         start_time = time.time()
@@ -104,6 +104,12 @@ class GanClsTrainer(object):
         for epoch in range(self.cfg.TRAIN.EPOCH):
             # Updates per epoch are given by the training data size / batch size
             updates_per_epoch = self.dataset.train.num_examples // self.model.batch_size
+
+            # Display the captions of the sampled images
+            print('\nCaptions of the sampled x:')
+            for caption_idx, caption_batch in enumerate(captions):
+                print('{}: {}'.format(caption_idx + 1, caption_batch[0]))
+            print()
 
             for idx in range(0, updates_per_epoch):
                 images, wrong_images, embed, _, _ = self.dataset.train.next_batch(self.model.batch_size, 4,
@@ -134,9 +140,9 @@ class GanClsTrainer(object):
                 self.writer.add_summary(summary_str, counter)
 
                 counter += 1
-                print("Epoch: [%2d] [%4d/%4d] time: %4.4f, d_loss: %.8f, g_loss: %.8f"
-                      % (epoch, idx, updates_per_epoch,
-                         time.time() - start_time, err_d, err_g))
+                if np.mod(counter, 10) == 0:
+                    print("Epoch: [%2d] [%4d/%4d] time: %4.4f, d_loss: %.8f, g_loss: %.8f"
+                          % (epoch, idx, updates_per_epoch, time.time() - start_time, err_d, err_g))
 
                 if np.mod(counter, 100) == 0:
                     try:
@@ -149,11 +155,6 @@ class GanClsTrainer(object):
                                     '{}train_{:02d}_{:04d}.png'.format(self.cfg.SAMPLE_DIR, epoch, idx))
                         print("[Sample] d_loss: %.8f, g_loss: %.8f" % (err_d, err_g))
 
-                        # Display the captions of the sampled images
-                        print('\nCaptions of the sampled x:')
-                        for caption_idx, caption_batch in enumerate(captions):
-                            print('{}: {}'.format(caption_idx + 1, caption_batch[0]))
-                        print()
                     except Exception as e:
                         print("Failed to generate sample image")
                         print(type(e))
@@ -162,3 +163,4 @@ class GanClsTrainer(object):
 
                 if np.mod(counter, 500) == 2:
                     save(self.saver, self.sess, self.cfg.CHECKPOINT_DIR, counter)
+

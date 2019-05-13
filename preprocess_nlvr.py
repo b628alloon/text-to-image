@@ -1,6 +1,3 @@
-"""
-Parts of this code are taken from: https://github.com/hanzhanggit/StackGAN/blob/master/misc/preprocess_flowers.py
-"""
 import os
 from preprocess.utils import get_image
 import scipy.misc
@@ -9,10 +6,12 @@ from sklearn.externals import joblib
 
 
 # Edit this list to specify which files to be created
+# このリストを編集して作成するファイルを指定してください。
 IMG_WIDTH = 400
 IMG_HEIGHT = 100
-IMG_SIZES = [600]
+IMG_SIZES = [360]
 LOAD_SIZE = 600
+FLOWER_DIR = './data/flowers'
 NLVR_DIR = './data/nlvr'
 
 
@@ -35,11 +34,8 @@ def save_data_list(inpath, outpath, filenames):
         for idx, key in enumerate(filenames):
             f_name = '%s/%s.png' % (inpath, key)
             img = get_image(f_name, LOAD_SIZE, is_crop=False)
+            img = scipy.misc.imresize(img, [IMG_WIDTH, IMG_HEIGHT], 'bicubic')
             img = img.astype('uint8')
-            img = img.astype('uint8')
-
-            if size != LOAD_SIZE:
-                img = scipy.misc.imresize(img, [IMG_WIDTH, IMG_HEIGHT], 'bicubic')
             images[idx, :, :, :] = np.array(img)
 
             cnt += 1
@@ -66,4 +62,5 @@ def convert_nlvr_dataset_pickle(inpath):
 
 
 if __name__ == '__main__':
+    # convert_flowers_dataset_pickle(FLOWER_DIR)
     convert_nlvr_dataset_pickle(NLVR_DIR)
